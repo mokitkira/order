@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kira.order.mapper.SubOrderMapper">
+  <resultMap id="BaseResultMap" type="com.kira.order.entity.SubOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="crt_user" jdbcType="VARCHAR" property="crtUser" />
+    <result column="order_num" jdbcType="VARCHAR" property="orderNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, crt_time, order_id, crt_user, order_num
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sub_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sub_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.kira.order.entity.SubOrder" useGeneratedKeys="true">
+    insert into sub_order (crt_time, order_id, crt_user, order_num
+      )
+    values (#{crtTime,jdbcType=TIMESTAMP}, #{orderId,jdbcType=INTEGER}, #{crtUser,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.kira.order.entity.SubOrder" useGeneratedKeys="true">
+    insert into sub_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="crtTime != null">
+        crt_time,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="crtUser != null">
+        crt_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="crtTime != null">
+        #{crtTime,jdbcType=DATE},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="crtUser != null">
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kira.order.entity.SubOrder">
+    update sub_order
+    <set>
+      <if test="crtTime != null">
+        crt_time = #{crtTime,jdbcType=DATE},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="crtUser != null">
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kira.order.entity.SubOrder">
+    update sub_order
+    set crt_time = #{crtTime,jdbcType=DATE},
+      order_id = #{orderId,jdbcType=INTEGER},
+      crt_user = #{crtUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="existLatestSubCallOrder" resultType="boolean">
+      SELECT count(*)>0  FROM sub_order WHERE order_num = #{orderNum} and crt_user = #{userName}
+            AND date_sub( now(), INTERVAL 1 MINUTE )&lt;= crt_time
+    </select>
+</mapper>
